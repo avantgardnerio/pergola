@@ -1,4 +1,5 @@
 $psi=.1;
+$fn=50;
 
 rotate([0,0,-45]) {
 // foor
@@ -47,4 +48,14 @@ intersection() {
 }
 
 //sun disk
-//circle()
+sunAngle = 25;
+rotate([-sunAngle,0,0])
+%circle(20);
+
+//animation code
+$vpt=[0,0,0];
+$vpr=[90 - (sunAngle * sin(180 * ($t)) ), 0, 90 - ($t*180) ];
+$vpd=60;     // zoom
+
+
+
