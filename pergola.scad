@@ -1,3 +1,5 @@
+$psi=.1;
+
 rotate([0,0,-45]) {
 // foor
 cube([5.6896, 2.896, 0.038]);
@@ -8,16 +10,16 @@ translate([0, 2.896, 0]) {
             // wall
             cube([5.6896, 3.23, 0.038]);
             // window
-            translate([0.9, 0.9, 0]) {
-                cube([0.7, 1.22, 0.038]);
+            translate([0.9, 0.9, 0-$psi/2]) {
+                cube([0.7, 1.22, 0.038 + $psi]);
             }
             // window
-            translate([1.8, 0.9, 0]) {
-                cube([0.7, 1.22, 0.038]);
+            translate([1.8, 0.9, 0-$psi/2]) {
+                cube([0.7, 1.22, 0.038 + $psi]);
             }
             // door
-            translate([3.4, 0.0, 0]) {
-                cube([0.91, 2.12, 0.038]);
+            translate([3.4, 0.0, 0-$psi/2]) {
+                cube([0.91, 2.12, 0.038 + $psi]);
             }
         }
     }
@@ -43,3 +45,6 @@ intersection() {
         }
     }
 }
+
+//sun disk
+//circle()
