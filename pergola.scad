@@ -55,7 +55,7 @@ rotate([-sunAngle,0,0])
 //animation code
 $vpt=[0,0,0];
 $vpr=[90 - (sunAngle * sin(180 * ($t)) ), 0, 90 - ($t*180) ];
-$vpd=60;     // zoom
+$vpd=30;     // zoom
 
 
 
