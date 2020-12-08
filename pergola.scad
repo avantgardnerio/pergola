@@ -48,20 +48,22 @@ intersection() {
 }
 
 //sun disk
-//max angle 39N in denver.
-sunAngle = 39;
+//solar angle by date found here: https://www.esrl.noaa.gov/gmd/grad/solcalc/azel.html
+//max/min = 65.13/23.7
+sunAngle = 23.7;
+sunAngle = 65;
+
 rotate([-sunAngle,0,0])
 #circle(20);
 
 
-//$t=0.0;
 //animation code
-$vpt=[0,0,0]; // look at origin
-$vpd=60;      // zoom
-//improper euler angle trig calc below, might be good enough
-$vpr=[90 - (sunAngle * sin(180 * ($t)) ), 0, 90 - ($t*180)]; 
+$vpt=[0,0,0]; // look at origin, no viewport translation
+$vpd=20;      // zoom, view port distance
+//view port rotation off origin, fixed rotation not rotating around the path
+//vpr=[90 - (sunAngle * sin(180 * ($t)) ), 0, 90 - ($t*180)]; 
 //overcompensated wrong euler angle
-//$vpr=[90 - 1.7*(sunAngle) * sin(180 * $t) * sin(sunAngle), 0, 90 - ($t*180)];
+$vpr=[90 - (sunAngle)*sin(180 * $t) , 0, 90 - ($t*180) - (17*sin(sunAngle) * cos(2*$t * 180 +  90) )];
 
 
 
