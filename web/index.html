@@ -6,6 +6,7 @@
         onload = () => {
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight);
+            camera.position.z = 5;
             const renderer = new THREE.WebGLRenderer({antialias: true});
             renderer.setSize(innerWidth, innerHeight);
             document.body.append(renderer.domElement);
@@ -13,13 +14,11 @@
             const earth_geom = new THREE.SphereGeometry( 1, 32, 32 );
             const earth_mat = new THREE.MeshPhongMaterial({color: 0x344277});
             const earth = new THREE.Mesh( earth_geom, earth_mat );
-            earth.position.z = -5;
             scene.add(earth);
 
             const sun_geom = new THREE.SphereGeometry( 0.2, 32, 32 );
             const sun_mat = new THREE.MeshPhongMaterial({color: 0xFDB813});
             const sun = new THREE.Mesh( sun_geom, sun_mat );
-            sun.position.z = -5;
             sun.position.x = -5;
             scene.add(sun);
 
