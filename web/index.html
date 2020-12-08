@@ -19,6 +19,13 @@
             scene.add(cube);
 
             renderer.render(scene,camera);
+
+            const animate = () => {
+                cube.rotation.x += 0.01;
+                renderer.render(scene,camera);
+                requestAnimationFrame(animate);
+            }
+            animate();
         }
     </script>
 </head>
