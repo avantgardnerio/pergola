@@ -5,18 +5,23 @@
     <script type="text/javascript">
         onload = () => {
             const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight);
+            const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight);
             const renderer = new THREE.WebGLRenderer({antialias: true});
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setSize(innerWidth, innerHeight);
             document.body.append(renderer.domElement);
 
-            const geometry = new THREE.SphereGeometry( 1, 32, 32 );
-            const material = new THREE.MeshPhongMaterial({color: 0xff0000});
-            const sphere = new THREE.Mesh( geometry, material );
-            sphere.position.z = -5;
-            sphere.rotation.x = 10;
-            sphere.rotation.y = 5;
-            scene.add(sphere);
+            const earth_geom = new THREE.SphereGeometry( 1, 32, 32 );
+            const earth_mat = new THREE.MeshPhongMaterial({color: 0x344277});
+            const earth = new THREE.Mesh( earth_geom, earth_mat );
+            earth.position.z = -5;
+            scene.add(earth);
+
+            const sun_geom = new THREE.SphereGeometry( 0.2, 32, 32 );
+            const sun_mat = new THREE.MeshPhongMaterial({color: 0xFDB813});
+            const sun = new THREE.Mesh( sun_geom, sun_mat );
+            sun.position.z = -5;
+            sun.position.x = -5;
+            scene.add(sun);
 
             const light = new THREE.DirectionalLight(0xffffff);
             light.position.set(0, 100, 100).normalize();
@@ -25,7 +30,7 @@
             renderer.render(scene, camera);
 
             const animate = () => {
-                sphere.rotation.x += 0.01;
+                earth.rotation.x += 0.01;
                 renderer.render(scene, camera);
                 requestAnimationFrame(animate);
             }
