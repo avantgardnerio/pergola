@@ -12,14 +12,15 @@
             renderer.setSize(innerWidth, innerHeight);
             document.body.append(renderer.domElement);
 
-            const earth_geom = new THREE.SphereGeometry( 1, 32, 32 );
+            const earth_geom = new THREE.SphereGeometry(1, 32, 32);
             const earth_mat = new THREE.MeshPhongMaterial({color: 0x344277});
-            const earth = new THREE.Mesh( earth_geom, earth_mat );
+            earth_mat.map = THREE.ImageUtils.loadTexture('img/earthmap1k.jpg')
+            const earth = new THREE.Mesh(earth_geom, earth_mat);
             scene.add(earth);
 
-            const sun_geom = new THREE.SphereGeometry( 0.2, 32, 32 );
+            const sun_geom = new THREE.SphereGeometry(0.2, 32, 32);
             const sun_mat = new THREE.MeshBasicMaterial({color: 0xFDB813});
-            const sun = new THREE.Mesh( sun_geom, sun_mat );
+            const sun = new THREE.Mesh(sun_geom, sun_mat);
             sun.matrixAutoUpdate = false;
             scene.add(sun);
 
