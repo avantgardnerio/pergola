@@ -13,7 +13,7 @@
             document.body.append(renderer.domElement);
 
             const earth_geom = new THREE.SphereGeometry(1, 32, 32);
-            const earth_mat = new THREE.MeshPhongMaterial({color: 0x344277});
+            const earth_mat = new THREE.MeshPhongMaterial({color: 0xFFFFFF});
             earth_mat.map = THREE.ImageUtils.loadTexture('img/earthmap1k.jpg')
             const earth = new THREE.Mesh(earth_geom, earth_mat);
             scene.add(earth);
