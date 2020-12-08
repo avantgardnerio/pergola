@@ -48,14 +48,21 @@ intersection() {
 }
 
 //sun disk
-sunAngle = 25;
+//max angle 39N in denver.
+sunAngle = 39;
 rotate([-sunAngle,0,0])
-%circle(20);
+#circle(20);
 
+
+//$t=0.0;
 //animation code
-$vpt=[0,0,0];
-$vpr=[90 - (sunAngle * sin(180 * ($t)) ), 0, 90 - ($t*180) ];
-$vpd=30;     // zoom
+$vpt=[0,0,0]; // look at origin
+$vpd=60;      // zoom
+//improper euler angle trig calc below, might be good enough
+$vpr=[90 - (sunAngle * sin(180 * ($t)) ), 0, 90 - ($t*180)]; 
+//overcompensated wrong euler angle
+//$vpr=[90 - 1.7*(sunAngle) * sin(180 * $t) * sin(sunAngle), 0, 90 - ($t*180)];
+
 
 
 
