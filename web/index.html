@@ -18,13 +18,12 @@
             scene.add(earth);
 
             const sun_geom = new THREE.SphereGeometry( 0.2, 32, 32 );
-            const sun_mat = new THREE.MeshPhongMaterial({color: 0xFDB813});
+            const sun_mat = new THREE.MeshBasicMaterial({color: 0xFDB813});
             const sun = new THREE.Mesh( sun_geom, sun_mat );
             sun.position.x = -5;
             scene.add(sun);
 
             const light = new THREE.DirectionalLight(0xffffff);
-            light.position.set(0, 100, 100).normalize();
             scene.add(light);
 
             renderer.render(scene, camera);
@@ -34,6 +33,8 @@
                 const delta = (now - start) / 1000;
                 sun.position.x = Math.cos(delta) * 5;
                 sun.position.z = Math.sin(delta) * 5;
+                light.position.set(sun.position.x, sun.position.y, sun.position.z).normalize();
+
                 renderer.render(scene, camera);
                 requestAnimationFrame(animate);
             }
