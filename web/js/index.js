@@ -1,7 +1,16 @@
-onload = () => {
-    const panel = document.querySelector(".main");
+const simStart = moment("2020-12-21T00:00:00Z");
+const msPerDay = 24 * 60 * 60 * 1000;
+const daysPerYear = 365;
+const msPerYear = daysPerYear * msPerDay;
+const simulationSpeed = 1000000;
 
-    const start = new Date().getTime();
+onload = () => {
+    const realStart = moment();
+
+    const panel = document.querySelector(".main");
+    const dtCur = document.querySelector("#dtCur");
+    const tmCur = document.querySelector("#tmCur");
+
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, panel.clientWidth / panel.clientHeight);
     camera.position.z = 10;
@@ -28,9 +37,15 @@ onload = () => {
     renderer.render(scene, camera);
 
     const animate = () => {
-        const now = new Date().getTime();
-        const day = (now - start) / 1000 * Math.PI * 2;
-        const year = day / 365;
+        const realNow = moment();
+        const realElapsed = realNow.diff(realStart, 'milliseconds');
+        const simElapsed = (realElapsed * simulationSpeed) % msPerYear;
+        const day = simElapsed / msPerDay;
+        const year = day / daysPerYear;
+        const simNow = simStart.clone().add(simElapsed, 'milliseconds');
+        
+        dtCur.setAttribute("value", simNow.utc().format("YYYY-MM-DD"));
+        tmCur.setAttribute("value", simNow.utc().format("HH:mm:ss"));
 
         const day_rot = new THREE.Matrix4();
         day_rot.makeRotationY(day);

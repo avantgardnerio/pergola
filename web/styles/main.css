@@ -34,3 +34,7 @@ body {
 .footer {
     grid-area: footer;
 }
+
+#rngDayNum {
+    width: 100%;
+}

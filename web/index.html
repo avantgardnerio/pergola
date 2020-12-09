@@ -3,12 +3,20 @@
     <title>Pergola</title>
     <link rel="stylesheet" href="styles/main.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r123/three.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="main"></div>
-        <div class="footer"></div>
+        <div class="footer">
+            <label for="rngDayNum"></label>
+            <input type="range" min="0" max="364" value="0" class="slider" id="rngDayNum" />
+            <label for="dtCur">Date</label>
+            <input type="date" id="dtCur" value="2020-12-21" min="2020-12-21" max="2021-12-20" />
+            <label for="tmCur">Time</label>
+            <input type="time" id="tmCur" value="00:00" min="00:00" max="24:00" />
+        </div>
     </div>
 </body>
 </html>
