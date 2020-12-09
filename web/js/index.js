@@ -3,6 +3,7 @@ const msPerDay = 24 * 60 * 60 * 1000;
 const daysPerYear = 365;
 const msPerYear = daysPerYear * msPerDay;
 const simulationSpeed = 1000000;
+const TAU = Math.PI * 2;
 
 onload = () => {
     const realStart = moment();
@@ -49,15 +50,16 @@ onload = () => {
         const dtText = dtCur.getAttribute("value");
         const tmText = tmCur.getAttribute("value");
         const simNow = moment(`${dtText}T${tmText}Z`);
-        const day = 0;
-        const year = 0;
+        const millis = simNow.diff(simStart, 'milliseconds');
+        const day = millis / msPerDay;
+        const year = day / daysPerYear;
 
         // Update model
         const day_rot = new THREE.Matrix4();
         day_rot.makeRotationY(day);
 
         const trans = new THREE.Matrix4();
-        trans.makeTranslation(Math.cos(year) * 5, 0, Math.sin(year) * 5);
+        trans.makeTranslation(Math.cos(year * TAU) * 5, 0, Math.sin(year * TAU) * 5);
         const orb_plane = new THREE.Matrix4();
         orb_plane.makeRotationZ(23.45 * Math.PI / 180);
 
