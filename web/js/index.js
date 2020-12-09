@@ -56,20 +56,17 @@ onload = () => {
 
         // Update model
         const day_rot = new THREE.Matrix4();
-        day_rot.makeRotationY(day);
+        day_rot.makeRotationY(-day);
 
-        const trans = new THREE.Matrix4();
-        trans.makeTranslation(Math.cos(year * TAU) * 5, 0, Math.sin(year * TAU) * 5);
+        const year_rot = new THREE.Matrix4();
+        year_rot.makeTranslation(Math.cos(year * TAU) * 5, 0, Math.sin(year * TAU) * 5);
         const orb_plane = new THREE.Matrix4();
-        orb_plane.makeRotationZ(23.45 * Math.PI / 180);
-
-        earth.matrix.identity();
-        earth.applyMatrix4(day_rot);
-        earth.updateMatrix();
+        orb_plane.makeRotationZ(-23.45 * Math.PI / 180);
 
         sun.matrix.identity();
-        sun.applyMatrix4(trans);
+        sun.applyMatrix4(year_rot);
         sun.applyMatrix4(orb_plane);
+        sun.applyMatrix4(day_rot);
         sun.updateMatrix();
 
         light.position.set(sun.position.x, sun.position.y, sun.position.z).normalize();
