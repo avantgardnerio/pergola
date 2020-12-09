@@ -37,16 +37,22 @@ onload = () => {
     renderer.render(scene, camera);
 
     const animate = () => {
+        // Set simulation now
         const realNow = moment();
         const realElapsed = realNow.diff(realStart, 'milliseconds');
         const simElapsed = (realElapsed * simulationSpeed) % msPerYear;
-        const day = simElapsed / msPerDay;
-        const year = day / daysPerYear;
-        const simNow = simStart.clone().add(simElapsed, 'milliseconds');
-        
-        dtCur.setAttribute("value", simNow.utc().format("YYYY-MM-DD"));
-        tmCur.setAttribute("value", simNow.utc().format("HH:mm:ss"));
+        const simNowWrite = simStart.clone().add(simElapsed, 'milliseconds');
+        dtCur.setAttribute("value", simNowWrite.utc().format("YYYY-MM-DD"));
+        tmCur.setAttribute("value", simNowWrite.utc().format("HH:mm:ss"));
 
+        // Get simulation now
+        const dtText = dtCur.getAttribute("value");
+        const tmText = tmCur.getAttribute("value");
+        const simNow = moment(`${dtText}T${tmText}Z`);
+        const day = 0;
+        const year = 0;
+
+        // Update model
         const day_rot = new THREE.Matrix4();
         day_rot.makeRotationY(day);
 
