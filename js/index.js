@@ -8,7 +8,7 @@ const TAU = Math.PI * 2;
 onload = () => {
     const realStart = moment();
 
-    const panel = document.querySelector(".main");
+    const canvas = document.querySelector(".main");
     const dtCur = document.querySelector("#dtCur");
     const tmCur = document.querySelector("#tmCur");
     const btnHourDec = document.querySelector("#btnHourDec");
@@ -16,6 +16,7 @@ onload = () => {
     const btnDayDec = document.querySelector("#btnDayDec");
     const btnDayEnc = document.querySelector("#btnDayEnc");
     const cbAnimate = document.querySelector("#cbAnimate");
+    const btnCameraReset = document.querySelector("#btnCameraReset");
 
     const getSimNow = () => {
         const dtText = dtCur.getAttribute("value");
@@ -34,15 +35,23 @@ onload = () => {
     cbAnimate.onchange = () => {
         if(cbAnimate.checked) tick();
     }
+    btnCameraReset.onclick = () => {
+        camera.position.x = 0;
+        camera.position.y = 0;
+        camera.position.z = 10;
+        controls.update();
+    }
     dtCur.onchange = () => requestAnimationFrame(render);
     tmCur.onchange = () => requestAnimationFrame(render);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, panel.clientWidth / panel.clientHeight);
+    const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight);
     camera.position.z = 10;
     const renderer = new THREE.WebGLRenderer({antialias: true});
-    renderer.setSize(panel.clientWidth, panel.clientHeight);
-    panel.appendChild(renderer.domElement);
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+    canvas.appendChild(renderer.domElement);
+    const controls = new THREE.OrbitControls( camera, renderer.domElement );
+    controls.update();
 
     const earth_geom = new THREE.SphereGeometry(1, 32, 32);
     const earth_mat = new THREE.MeshPhongMaterial({color: 0xFFFFFF});
@@ -95,6 +104,7 @@ onload = () => {
 
         renderer.render(scene, camera);
         if(cbAnimate.checked) tick();
+        requestAnimationFrame(render);
     }
     render();
 }

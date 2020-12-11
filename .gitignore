@@ -1,2 +1,3 @@
 *.stl
 .idea/
+node_modules/
