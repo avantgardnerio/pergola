@@ -15,6 +15,10 @@ onload = () => {
     const btnHourEnc = document.querySelector("#btnHourEnc");
     const btnDayDec = document.querySelector("#btnDayDec");
     const btnDayEnc = document.querySelector("#btnDayEnc");
+    const btnMonthDec = document.querySelector("#btnMonthDec");
+    const btnMonthEnc = document.querySelector("#btnMonthEnc");
+    const btnWeekDec = document.querySelector("#btnWeekDec");
+    const btnWeekEnc = document.querySelector("#btnWeekEnc");
     const cbAnimate = document.querySelector("#cbAnimate");
     const btnCameraReset = document.querySelector("#btnCameraReset");
 
@@ -32,6 +36,10 @@ onload = () => {
     btnHourEnc.onclick = () => setSimNow(getSimNow().add(1, 'hours'));
     btnDayDec.onclick = () => setSimNow(getSimNow().subtract(1, 'days'));
     btnDayEnc.onclick = () => setSimNow(getSimNow().add(1, 'days'));
+    btnWeekDec.onclick = () => setSimNow(getSimNow().subtract(1, 'weeks'));
+    btnWeekEnc.onclick = () => setSimNow(getSimNow().add(1, 'weeks'));
+    btnMonthDec.onclick = () => setSimNow(getSimNow().subtract(1, 'months'));
+    btnMonthEnc.onclick = () => setSimNow(getSimNow().add(1, 'months'));
     cbAnimate.onchange = () => {
         if(cbAnimate.checked) tick();
     }
@@ -87,7 +95,7 @@ onload = () => {
 
         // Update model
         const day_rot = new THREE.Matrix4();
-        day_rot.makeRotationY(-day);
+        day_rot.makeRotationY(-day * TAU + Math.PI);
 
         const year_rot = new THREE.Matrix4();
         year_rot.makeTranslation(Math.cos(year * TAU) * 5, 0, Math.sin(year * TAU) * 5);
