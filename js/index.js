@@ -11,6 +11,13 @@ onload = () => {
     const panel = document.querySelector(".main");
     const dtCur = document.querySelector("#dtCur");
     const tmCur = document.querySelector("#tmCur");
+    const cbAnimate = document.querySelector("#cbAnimate");
+
+    cbAnimate.onchange = (e) => {
+        if(cbAnimate.checked) {
+            requestAnimationFrame(animate);
+        }
+    }
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, panel.clientWidth / panel.clientHeight);
@@ -72,7 +79,9 @@ onload = () => {
         light.position.set(sun.position.x, sun.position.y, sun.position.z).normalize();
 
         renderer.render(scene, camera);
-        requestAnimationFrame(animate);
+        if(cbAnimate.checked) {
+            requestAnimationFrame(animate);
+        }
     }
     animate();
 }
