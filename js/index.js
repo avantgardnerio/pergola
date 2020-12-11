@@ -11,13 +11,31 @@ onload = () => {
     const panel = document.querySelector(".main");
     const dtCur = document.querySelector("#dtCur");
     const tmCur = document.querySelector("#tmCur");
+    const btnHourDec = document.querySelector("#btnHourDec");
+    const btnHourEnc = document.querySelector("#btnHourEnc");
+    const btnDayDec = document.querySelector("#btnDayDec");
+    const btnDayEnc = document.querySelector("#btnDayEnc");
     const cbAnimate = document.querySelector("#cbAnimate");
 
-    cbAnimate.onchange = (e) => {
-        if(cbAnimate.checked) {
-            requestAnimationFrame(animate);
-        }
+    const getSimNow = () => {
+        const dtText = dtCur.getAttribute("value");
+        const tmText = tmCur.getAttribute("value");
+        return moment(`${dtText}T${tmText}Z`);
     }
+    const setSimNow = (instant) => {
+        dtCur.setAttribute("value", instant.utc().format("YYYY-MM-DD"));
+        tmCur.setAttribute("value", instant.utc().format("HH:mm:ss"));
+        render();
+    }
+    btnHourDec.onclick = () => setSimNow(getSimNow().subtract(1, 'hours'));
+    btnHourEnc.onclick = () => setSimNow(getSimNow().add(1, 'hours'));
+    btnDayDec.onclick = () => setSimNow(getSimNow().subtract(1, 'days'));
+    btnDayEnc.onclick = () => setSimNow(getSimNow().add(1, 'days'));
+    cbAnimate.onchange = () => {
+        if(cbAnimate.checked) tick();
+    }
+    dtCur.onchange = () => requestAnimationFrame(render);
+    tmCur.onchange = () => requestAnimationFrame(render);
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, panel.clientWidth / panel.clientHeight);
@@ -44,19 +62,16 @@ onload = () => {
 
     renderer.render(scene, camera);
 
-    const animate = () => {
-        // Set simulation now
+    const tick = () => {
         const realNow = moment();
         const realElapsed = realNow.diff(realStart, 'milliseconds');
         const simElapsed = (realElapsed * simulationSpeed) % msPerYear;
         const simNowWrite = simStart.clone().add(simElapsed, 'milliseconds');
-        dtCur.setAttribute("value", simNowWrite.utc().format("YYYY-MM-DD"));
-        tmCur.setAttribute("value", simNowWrite.utc().format("HH:mm:ss"));
-
+        setSimNow(simNowWrite);
+    }
+    const render = () => {
         // Get simulation now
-        const dtText = dtCur.getAttribute("value");
-        const tmText = tmCur.getAttribute("value");
-        const simNow = moment(`${dtText}T${tmText}Z`);
+        const simNow = getSimNow();
         const millis = simNow.diff(simStart, 'milliseconds');
         const day = millis / msPerDay;
         const year = day / daysPerYear;
@@ -79,9 +94,7 @@ onload = () => {
         light.position.set(sun.position.x, sun.position.y, sun.position.z).normalize();
 
         renderer.render(scene, camera);
-        if(cbAnimate.checked) {
-            requestAnimationFrame(animate);
-        }
+        if(cbAnimate.checked) tick();
     }
-    animate();
+    render();
 }
