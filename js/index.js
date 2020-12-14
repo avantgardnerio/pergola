@@ -25,11 +25,11 @@ onload = () => {
     const getSimNow = () => {
         const dtText = dtCur.getAttribute("value");
         const tmText = tmCur.getAttribute("value");
-        return moment(`${dtText}T${tmText}Z`);
+        return moment(`${dtText}T${tmText}`);
     }
     const setSimNow = (instant) => {
-        dtCur.setAttribute("value", instant.utc().format("YYYY-MM-DD"));
-        tmCur.setAttribute("value", instant.utc().format("HH:mm:ss"));
+        dtCur.setAttribute("value", instant.format("YYYY-MM-DD"));
+        tmCur.setAttribute("value", instant.format("HH:mm:ss"));
         render();
     }
     btnHourDec.onclick = () => setSimNow(getSimNow().subtract(1, 'hours'));
