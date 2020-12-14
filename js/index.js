@@ -73,7 +73,19 @@ onload = () => {
     const material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
     material.map = THREE.ImageUtils.loadTexture('img/compass-rose.png')
     const cube = new THREE.Mesh( geometry, material );
+    cube.position.y = -0.2;
     scene.add( cube );
+
+    // pergola
+    const loader = new THREE.STLLoader();
+    loader.load( './model/pergola.stl', function ( geometry ) {
+        const material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+        const mesh = new THREE.Mesh( geometry, material );
+        // mesh.position.set( 0, - 0.25, 0.6 );
+        mesh.rotation.set( - Math.PI / 2, 0, 0 );
+        // mesh.scale.set( 0.5, 0.5, 0.5 );
+        scene.add( mesh );
+    } );
 
     const light = new THREE.DirectionalLight(0xffffff);
     scene.add(light);
@@ -92,13 +104,13 @@ onload = () => {
         const simNow = getSimNow();
 
         // suncalc
-        const lat = 51.5;
-        const lon = -0.1;
+        const lat = 39.7;
+        const lon = -105;
         const sunrisePos = SunCalc.getPosition(simNow.toDate(), lat, lon);
 
         // Update model
         const dist = new THREE.Matrix4();
-        dist.makeTranslation(0, 0, -6);
+        dist.makeTranslation(0, 0, -10);
         const altitude = new THREE.Matrix4();
         altitude.makeRotationX(sunrisePos.altitude);
         const azimuth = new THREE.Matrix4();
