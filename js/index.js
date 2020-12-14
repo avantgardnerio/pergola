@@ -61,18 +61,19 @@ onload = () => {
     const controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.update();
 
-    const earth_geom = new THREE.SphereGeometry(1, 32, 32);
-    const earth_mat = new THREE.MeshPhongMaterial({color: 0xFFFFFF});
-    earth_mat.map = THREE.ImageUtils.loadTexture('img/earthmap1k.jpg')
-    const earth = new THREE.Mesh(earth_geom, earth_mat);
-    earth.matrixAutoUpdate = false;
-    scene.add(earth);
-
+    // sun
     const sun_geom = new THREE.SphereGeometry(0.2, 32, 32);
     const sun_mat = new THREE.MeshBasicMaterial({color: 0xFDB813});
     const sun = new THREE.Mesh(sun_geom, sun_mat);
     sun.matrixAutoUpdate = false;
     scene.add(sun);
+
+    // ground
+    const geometry = new THREE.BoxGeometry( 10, .1, 10 );
+    const material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
+    material.map = THREE.ImageUtils.loadTexture('img/compass-rose.png')
+    const cube = new THREE.Mesh( geometry, material );
+    scene.add( cube );
 
     const light = new THREE.DirectionalLight(0xffffff);
     scene.add(light);
@@ -89,32 +90,23 @@ onload = () => {
     const render = () => {
         // Get simulation now
         const simNow = getSimNow();
-        const millis = simNow.diff(simStart, 'milliseconds');
-        const day = millis / msPerDay;
-        const year = day / daysPerYear;
 
         // suncalc
         const lat = 51.5;
         const lon = -0.1;
-        const times = SunCalc.getTimes(simNow.toDate(), lat, lon);
-        const sunriseStr = times.sunrise.getHours() + ':' + times.sunrise.getMinutes();
-        const sunrisePos = SunCalc.getPosition(times.sunrise, lat, lon);
-        const sunriseAzimuth = sunrisePos.azimuth * 180 / Math.PI;
-        console.log(`sunriseStr=${sunriseStr} altitude=${sunrisePos.altitude} azimuth=${sunrisePos.azimuth}  sunriseAzimuth=${sunriseAzimuth}`);
+        const sunrisePos = SunCalc.getPosition(simNow.toDate(), lat, lon);
 
         // Update model
-        const day_rot = new THREE.Matrix4();
-        day_rot.makeRotationY(-day * TAU + Math.PI);
-
-        const year_rot = new THREE.Matrix4();
-        year_rot.makeTranslation(Math.cos(year * TAU) * 5, 0, Math.sin(year * TAU) * 5);
-        const orb_plane = new THREE.Matrix4();
-        orb_plane.makeRotationZ(-23.45 * Math.PI / 180);
-
+        const dist = new THREE.Matrix4();
+        dist.makeTranslation(0, 0, -6);
+        const altitude = new THREE.Matrix4();
+        altitude.makeRotationX(sunrisePos.altitude);
+        const azimuth = new THREE.Matrix4();
+        azimuth.makeRotationY(-sunrisePos.azimuth + Math.PI);
         sun.matrix.identity();
-        sun.applyMatrix4(year_rot);
-        sun.applyMatrix4(orb_plane);
-        sun.applyMatrix4(day_rot);
+        sun.applyMatrix4(dist);
+        sun.applyMatrix4(altitude);
+        sun.applyMatrix4(azimuth);
         sun.updateMatrix();
 
         light.position.set(sun.position.x, sun.position.y, sun.position.z).normalize();
