@@ -57,6 +57,9 @@ onload = () => {
     camera.position.z = 10;
     const renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMapSoft = true;
     canvas.appendChild(renderer.domElement);
     const controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.update();
@@ -70,24 +73,28 @@ onload = () => {
 
     // ground
     const geometry = new THREE.BoxGeometry( 10, .1, 10 );
-    const material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
+    const material = new THREE.MeshBasicMaterial({color: 0x888888});
     material.map = THREE.ImageUtils.loadTexture('img/compass-rose.png')
     const cube = new THREE.Mesh( geometry, material );
+    cube.receiveShadow = true;
     cube.position.y = -0.2;
     scene.add( cube );
 
     // pergola
     const loader = new THREE.STLLoader();
     loader.load( './model/pergola.stl', function ( geometry ) {
-        const material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+        const material = new THREE.MeshPhysicalMaterial( { color: 0x888888 } );
         const mesh = new THREE.Mesh( geometry, material );
-        // mesh.position.set( 0, - 0.25, 0.6 );
         mesh.rotation.set( - Math.PI / 2, 0, 0 );
-        // mesh.scale.set( 0.5, 0.5, 0.5 );
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
         scene.add( mesh );
     } );
 
     const light = new THREE.DirectionalLight(0xffffff);
+    light.shadowDarkness = 0.5;
+    light.castShadow = true;
+    light.shadowCameraVisible = true;
     scene.add(light);
 
     renderer.render(scene, camera);
