@@ -82,7 +82,7 @@ onload = () => {
 
     // pergola
     const loader = new THREE.STLLoader();
-    loader.load( './model/pergola.stl', function ( geometry ) {
+    loader.load( './model/pergola.stl.txt', function ( geometry ) {
         const material = new THREE.MeshPhysicalMaterial( { color: 0x888888 } );
         const mesh = new THREE.Mesh( geometry, material );
         mesh.rotation.set( - Math.PI / 2, 0, 0 );
