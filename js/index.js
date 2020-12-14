@@ -73,7 +73,7 @@ onload = () => {
 
     // ground
     const geometry = new THREE.BoxGeometry( 10, .1, 10 );
-    const material = new THREE.MeshBasicMaterial({color: 0x888888});
+    const material = new THREE.MeshPhysicalMaterial({color: 0x888888});
     material.map = THREE.ImageUtils.loadTexture('img/compass-rose.png')
     const cube = new THREE.Mesh( geometry, material );
     cube.receiveShadow = true;
