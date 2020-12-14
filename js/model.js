@@ -14,9 +14,9 @@ onload = () => {
     loader.load( './model/pergola.stl', function ( geometry ) {
         const material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
         const mesh = new THREE.Mesh( geometry, material );
-        mesh.position.set( 0, - 0.25, 0.6 );
-        mesh.rotation.set( 0, - Math.PI / 2, 0 );
-        mesh.scale.set( 0.5, 0.5, 0.5 );
+        // mesh.position.set( 0, - 0.25, 0.6 );
+        // mesh.rotation.set( 0, - Math.PI / 2, 0 );
+        // mesh.scale.set( 0.5, 0.5, 0.5 );
         scene.add( mesh );
     } );
 

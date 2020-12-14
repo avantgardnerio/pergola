@@ -93,6 +93,15 @@ onload = () => {
         const day = millis / msPerDay;
         const year = day / daysPerYear;
 
+        // suncalc
+        const lat = 51.5;
+        const lon = -0.1;
+        const times = SunCalc.getTimes(simNow.toDate(), lat, lon);
+        const sunriseStr = times.sunrise.getHours() + ':' + times.sunrise.getMinutes();
+        const sunrisePos = SunCalc.getPosition(times.sunrise, lat, lon);
+        const sunriseAzimuth = sunrisePos.azimuth * 180 / Math.PI;
+        console.log(`sunriseStr=${sunriseStr} altitude=${sunrisePos.altitude} azimuth=${sunrisePos.azimuth}  sunriseAzimuth=${sunriseAzimuth}`);
+
         // Update model
         const day_rot = new THREE.Matrix4();
         day_rot.makeRotationY(-day * TAU + Math.PI);
