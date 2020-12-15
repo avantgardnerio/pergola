@@ -72,8 +72,8 @@ onload = () => {
     scene.add(sun);
 
     // ground
-    const geometry = new THREE.BoxGeometry( 10, .1, 10 );
-    const material = new THREE.MeshPhysicalMaterial({color: 0x888888});
+    const geometry = new THREE.BoxGeometry( 20, .1, 20 );
+    const material = new THREE.MeshPhongMaterial({color: 0x888888});
     material.map = THREE.ImageUtils.loadTexture('img/compass-rose.png')
     const cube = new THREE.Mesh( geometry, material );
     cube.receiveShadow = true;
@@ -83,7 +83,7 @@ onload = () => {
     // pergola
     const loader = new THREE.STLLoader();
     loader.load( './model/pergola.stl.txt', function ( geometry ) {
-        const material = new THREE.MeshPhysicalMaterial( { color: 0x888888 } );
+        const material = new THREE.MeshPhongMaterial( { color: 0x888888 } );
         const mesh = new THREE.Mesh( geometry, material );
         mesh.rotation.set( - Math.PI / 2, 0, 0 );
         mesh.castShadow = true;
@@ -91,11 +91,11 @@ onload = () => {
         scene.add( mesh );
     } );
 
-    const light = new THREE.DirectionalLight(0xffffff);
-    light.shadowDarkness = 0.5;
+    const light = new THREE.DirectionalLight(0xffffff, 0.5);
     light.castShadow = true;
-    light.shadowCameraVisible = true;
     scene.add(light);
+
+    // scene.add(new THREE.CameraHelper(light.shadow.camera));
 
     renderer.render(scene, camera);
 
@@ -128,7 +128,9 @@ onload = () => {
         sun.applyMatrix4(azimuth);
         sun.updateMatrix();
 
-        light.position.set(sun.position.x, sun.position.y, sun.position.z).normalize();
+        light.position.x = sun.position.x;
+        light.position.y = sun.position.y;
+        light.position.z = sun.position.z;
 
         renderer.render(scene, camera);
         if(cbAnimate.checked) tick();
