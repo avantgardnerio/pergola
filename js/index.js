@@ -8,7 +8,18 @@ const TAU = Math.PI * 2;
 onload = () => {
     const realStart = moment();
 
+    const temps = {
+        "#b05b5a": 90,
+        "#c77560": 80,
+        "#e9cc77": 70,
+        "#8dbf71": 60,
+        "#74a877": 50,
+        "#679568": 40,
+        "#83c2d5": 20,
+    };
+
     const svgNs = "http://www.w3.org/2000/svg";
+    const spnTemp = document.querySelector("#spnTemp");
     const canvas = document.querySelector(".main");
     const dtCur = document.querySelector("#dtCur");
     const tmCur = document.querySelector("#tmCur");
@@ -53,13 +64,11 @@ onload = () => {
         point.y = top + (1.0 - (minutes / (60 * 24))) * height;
         circle.setAttribute("cx", `${point.x}`);
         circle.setAttribute("cy", `${point.y}`);
-        for(let path of g.children) {
-            if(path.isPointInFill(point)) {
-                console.log(path)
-                count++;
-            }
-        }
-        console.log(`In ${count} paths`)
+        const fill = Array.from(g.childNodes).filter(el => el.nodeName === "path")
+            .filter(path => path.isPointInFill(point))
+            .map(path => path.getAttribute("fill"))[0];
+        const temp = temps[fill];
+        spnTemp.innerHTML = `${temp}&deg;F`;
 
         render();
     }
