@@ -150,8 +150,14 @@ onload = () => {
         scene.add( mesh );
     } );
 
-    const light = new THREE.DirectionalLight(0xffffff, 0.5);
+    const light = new THREE.DirectionalLight(0xffffff, 0.9);
     light.castShadow = true;
+    light.shadow.mapSize.width = 1024;
+    light.shadow.mapSize.height = 1024;
+    light.shadow.camera.left = -10;
+    light.shadow.camera.top = 10;
+    light.shadow.camera.right = 10;
+    light.shadow.camera.bottom = -10;
     scene.add(light);
 
     // scene.add(new THREE.CameraHelper(light.shadow.camera));
