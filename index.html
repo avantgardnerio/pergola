@@ -13,16 +13,22 @@
     <div class="container">
         <div class="main"></div>
         <div class="footer">
-            <label for="cbAnimate">Animate</label><input type="checkbox" id="cbAnimate">
-            <input type="button" id="btnCameraReset" value="Reset Camera" />
-            <label for="dtCur">Date</label>
-            <input type="date" id="dtCur" value="2020-12-21" min="2020-12-21" max="2021-12-20" />
-            <label for="tmCur">Time</label>
-            <input type="time" id="tmCur" value="00:00" min="00:00" max="24:00" />
-            <input type="button" value="-" id="btnHourDec" />Hour<input type="button" value="+" id="btnHourEnc" />
-            <input type="button" value="-" id="btnDayDec" />Day<input type="button" value="+" id="btnDayEnc" />
-            <input type="button" value="-" id="btnWeekDec" />Week<input type="button" value="+" id="btnWeekEnc" />
-            <input type="button" value="-" id="btnMonthDec" />Month<input type="button" value="+" id="btnMonthEnc" />
+            <span style="vertical-align: top;">
+                <label for="cbAnimate">Animate</label><input type="checkbox" id="cbAnimate">
+                <input type="button" id="btnCameraReset" value="Reset Camera" />
+                <label for="dtCur">Date</label>
+                <input type="date" id="dtCur" value="2020-12-21" min="2020-12-21" max="2021-12-20" />
+                <label for="tmCur">Time</label>
+                <input type="time" id="tmCur" value="00:00" min="00:00" max="24:00" />
+                <input type="button" value="-" id="btnHourDec" />Hour<input type="button" value="+" id="btnHourEnc" />
+                <input type="button" value="-" id="btnDayDec" />Day<input type="button" value="+" id="btnDayEnc" />
+                <input type="button" value="-" id="btnWeekDec" />Week<input type="button" value="+" id="btnWeekEnc" />
+                <input type="button" value="-" id="btnMonthDec" />Month<input type="button" value="+" id="btnMonthEnc" />
+            </span>
+            <span>
+                <!-- https://weatherspark.com/y/3709/Average-Weather-in-Denver-Colorado-United-States-Year-Round -->
+                <object type="image/svg+xml" data="img/denver.svg" height="100%"></object>
+            </span>
         </div>
     </div>
 </body>

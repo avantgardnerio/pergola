@@ -8,6 +8,7 @@ const TAU = Math.PI * 2;
 onload = () => {
     const realStart = moment();
 
+    const svgNs = "http://www.w3.org/2000/svg";
     const canvas = document.querySelector(".main");
     const dtCur = document.querySelector("#dtCur");
     const tmCur = document.querySelector("#tmCur");
@@ -21,6 +22,19 @@ onload = () => {
     const btnWeekEnc = document.querySelector("#btnWeekEnc");
     const cbAnimate = document.querySelector("#cbAnimate");
     const btnCameraReset = document.querySelector("#btnCameraReset");
+    const obj = document.querySelector("object");
+    const svg = obj.getSVGDocument();
+    const g = svg.querySelector("g");
+    const rect = svg.querySelectorAll("rect")[1];
+    const left = parseFloat(rect.getAttribute("x"));
+    const top = parseFloat(rect.getAttribute("y"));
+    const width = parseFloat(rect.getAttribute("width"));
+    const height = parseFloat(rect.getAttribute("height"));
+    const point = svg.documentElement.createSVGPoint();
+    let circle = svg.createElementNS(svgNs, "circle");
+    circle.setAttribute("r", "40");
+    circle.setAttribute("fill", "red");
+    g.appendChild(circle);
 
     const getSimNow = () => {
         const dtText = dtCur.getAttribute("value");
@@ -30,6 +44,23 @@ onload = () => {
     const setSimNow = (instant) => {
         dtCur.setAttribute("value", instant.format("YYYY-MM-DD"));
         tmCur.setAttribute("value", instant.format("HH:mm:ss"));
+
+        const simNow = getSimNow();
+        const dayOfYear = simNow.dayOfYear();
+        const minutes = simNow.get('hours') * 60 + simNow.get('minutes');
+        let count = 0;
+        point.x = left + (dayOfYear / 365) * width;
+        point.y = top + (1.0 - (minutes / (60 * 24))) * height;
+        circle.setAttribute("cx", `${point.x}`);
+        circle.setAttribute("cy", `${point.y}`);
+        for(let path of g.children) {
+            if(path.isPointInFill(point)) {
+                console.log(path)
+                count++;
+            }
+        }
+        console.log(`In ${count} paths`)
+
         render();
     }
     btnHourDec.onclick = () => setSimNow(getSimNow().subtract(1, 'hours'));
@@ -103,8 +134,8 @@ onload = () => {
         const realNow = moment();
         const realElapsed = realNow.diff(realStart, 'milliseconds');
         const simElapsed = (realElapsed * simulationSpeed) % msPerYear;
-        const simNowWrite = simStart.clone().add(simElapsed, 'milliseconds');
-        setSimNow(simNowWrite);
+        const simNow = simStart.clone().add(simElapsed, 'milliseconds');
+        setSimNow(simNow);
     }
     const render = () => {
         // Get simulation now
