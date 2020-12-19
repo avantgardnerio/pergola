@@ -19,6 +19,8 @@ onload = () => {
     };
 
     const svgNs = "http://www.w3.org/2000/svg";
+    const rbWall = document.querySelector("#rbWall");
+    const rbOrbit = document.querySelector("#rbOrbit");
     const spnTemp = document.querySelector("#spnTemp");
     const canvas = document.querySelector(".main");
     const dtCur = document.querySelector("#dtCur");
@@ -59,7 +61,6 @@ onload = () => {
         const simNow = getSimNow();
         const dayOfYear = simNow.dayOfYear();
         const minutes = simNow.get('hours') * 60 + simNow.get('minutes');
-        let count = 0;
         point.x = left + (dayOfYear / 365) * width;
         point.y = top + (1.0 - (minutes / (60 * 24))) * height;
         circle.setAttribute("cx", `${point.x}`);
@@ -84,26 +85,44 @@ onload = () => {
         if(cbAnimate.checked) tick();
     }
     btnCameraReset.onclick = () => {
-        camera.position.x = 0;
-        camera.position.y = 0;
-        camera.position.z = 10;
+        orbitCam.position.x = 0;
+        orbitCam.position.y = 0;
+        orbitCam.position.z = 10;
         controls.update();
     }
     dtCur.onchange = () => requestAnimationFrame(render);
     tmCur.onchange = () => requestAnimationFrame(render);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight);
-    camera.position.z = 10;
+    const near = 0.00001;
+    const far = 1000;
+    let wallCam = new THREE.OrthographicCamera( -0.01, canvas.clientWidth / 256, canvas.clientHeight / 256, -0.01, near, far );
+    wallCam.position.x = -Math.PI;
+    wallCam.position.y = 0;
+    wallCam.position.z = Math.PI;
+    wallCam.rotation.x = 0;
+    wallCam.rotation.y = -Math.PI / 4;
+    wallCam.rotation.z = 0;
+    const orbitCam = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight);
+    orbitCam.position.y = 3;
+    orbitCam.position.z = 10;
     const renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.shadowMapSoft = true;
     canvas.appendChild(renderer.domElement);
-    const controls = new THREE.OrbitControls( camera, renderer.domElement );
+    const controls = new THREE.OrbitControls( orbitCam, renderer.domElement );
     controls.update();
 
+    let camera = orbitCam;
+    const camChange = (e) => {
+        if(e.target.value === "wall") camera = wallCam;
+        if(e.target.value === "orbit") camera = orbitCam;
+    }
+    rbWall.onclick = camChange;
+    rbOrbit.onclick = camChange;
+    
     // sun
     const sun_geom = new THREE.SphereGeometry(0.2, 32, 32);
     const sun_mat = new THREE.MeshBasicMaterial({color: 0xFDB813});

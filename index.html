@@ -16,10 +16,16 @@
             <span style="vertical-align: top;">
                 <label for="cbAnimate">Animate</label><input type="checkbox" id="cbAnimate">
                 <input type="button" id="btnCameraReset" value="Reset Camera" />
+                <input type="radio" id="rbWall" name="rbCamera" value="wall">
+                <label for="rbWall">Wall Cam</label>
+                <input type="radio" id="floor" name="rbCamera" value="floor">
+                <label for="floor">Floor Cam</label>
+                <input type="radio" id="rbOrbit" name="rbCamera" value="orbit" checked>
+                <label for="rbOrbit">Orbit</label>
                 <label for="dtCur">Date</label>
                 <input type="date" id="dtCur" value="2020-12-21" min="2020-12-21" max="2021-12-20" />
                 <label for="tmCur">Time</label>
-                <input type="time" id="tmCur" value="00:00" min="00:00" max="24:00" />
+                <input type="time" id="tmCur" value="13:00" min="00:00" max="24:00" />
                 <input type="button" value="-" id="btnHourDec" />Hour<input type="button" value="+" id="btnHourEnc" />
                 <input type="button" value="-" id="btnDayDec" />Day<input type="button" value="+" id="btnDayEnc" />
                 <input type="button" value="-" id="btnWeekDec" />Week<input type="button" value="+" id="btnWeekEnc" />
