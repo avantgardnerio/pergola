@@ -6,8 +6,12 @@ const simulationSpeed = 1000000;
 const TAU = Math.PI * 2;
 
 onload = () => {
+    const lat = 39.7;
+    const lon = -105;
     const realStart = moment();
 
+    const speed = 0.1;
+    const keyState = {};
     const temps = {
         "#b05b5a": 90,
         "#c77560": 80,
@@ -104,7 +108,7 @@ onload = () => {
     wallCam.rotation.y = -Math.PI / 4;
     wallCam.rotation.z = 0;
     const orbitCam = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight);
-    orbitCam.position.y = 3;
+    orbitCam.position.y = 1.5;
     orbitCam.position.z = 10;
     const renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
@@ -112,8 +116,11 @@ onload = () => {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.shadowMapSoft = true;
     canvas.appendChild(renderer.domElement);
-    const controls = new THREE.OrbitControls( orbitCam, renderer.domElement );
-    controls.update();
+    const controls = new THREE.PointerLockControls( orbitCam, renderer.domElement );
+    controls.connect();
+    canvas.onclick = () => controls.lock();
+    window.onkeydown = (e) => keyState[e.code] = true;
+    window.onkeyup = (e) => delete keyState[e.code];
 
     let camera = orbitCam;
     const camChange = (e) => {
@@ -125,10 +132,51 @@ onload = () => {
     
     // sun
     const sun_geom = new THREE.SphereGeometry(0.2, 32, 32);
-    const sun_mat = new THREE.MeshBasicMaterial({color: 0xFDB813});
-    const sun = new THREE.Mesh(sun_geom, sun_mat);
-    sun.matrixAutoUpdate = false;
-    scene.add(sun);
+    const start = moment("2020-12-21T00:00");
+    const end = start.clone().add(1, 'year');
+    for(let day = start; end.diff(day) > 0; day.add(1, 'months')) {
+        const times = SunCalc.getTimes(start.toDate(), lat, lon);
+        const sunriseStr = `${moment(times.sunrise).format('HH')}:00`;
+        const hour = `${times.sunset.getHours() + 1}`;
+        const sunsetStr = `${hour.padStart(2, '0')}:00`;
+        const sunset = moment(`${day.format('YYYY-MM-DD')}T${sunsetStr}`);
+        const nowStr = `${day.format('YYYY-MM-DD')}T${sunriseStr}`;
+        for(let now = moment(nowStr); sunset.diff(now) > 0; now.add(1, 'hour')) {
+            const dayOfYear = now.dayOfYear();
+            const minutes = now.get('hours') * 60 + now.get('minutes');
+            point.x = left + (dayOfYear / 365) * width;
+            point.y = top + (1.0 - (minutes / (60 * 24))) * height;
+            circle.setAttribute("cx", `${point.x}`);
+            circle.setAttribute("cy", `${point.y}`);
+            const fill = Array.from(g.childNodes).filter(el => el.nodeName === "path")
+                .filter(path => path.isPointInFill(point))
+                .map(path => path.getAttribute("fill"))[0];
+            const temp = temps[fill];
+            // if(temp >= 80) {
+            //     continue;
+            // }
+
+            const sun_mat = new THREE.MeshBasicMaterial({color: fill});
+            const sunPos = SunCalc.getPosition(now.toDate(), lat, lon);
+            // console.log(sunPos);
+            const sun = new THREE.Mesh(sun_geom, sun_mat);
+            sun.matrixAutoUpdate = false;
+
+            const dist = new THREE.Matrix4();
+            dist.makeTranslation(0, 0, -10);
+            const altitude = new THREE.Matrix4();
+            altitude.makeRotationX(sunPos.altitude);
+            const azimuth = new THREE.Matrix4();
+            azimuth.makeRotationY(-sunPos.azimuth + Math.PI);
+            sun.matrix.identity();
+            sun.applyMatrix4(dist);
+            sun.applyMatrix4(altitude);
+            sun.applyMatrix4(azimuth);
+            sun.updateMatrix();
+
+            scene.add(sun);
+        }
+    }
 
     // ground
     const geometry = new THREE.BoxGeometry( 20, .1, 20 );
@@ -150,6 +198,10 @@ onload = () => {
         scene.add( mesh );
     } );
 
+    const ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light
+    scene.add( ambientLight );
+
+    // directional
     const light = new THREE.DirectionalLight(0xffffff, 0.9);
     light.castShadow = true;
     light.shadow.mapSize.width = 1024;
@@ -172,33 +224,11 @@ onload = () => {
         setSimNow(simNow);
     }
     const render = () => {
-        // Get simulation now
-        const simNow = getSimNow();
-
-        // suncalc
-        const lat = 39.7;
-        const lon = -105;
-        const sunrisePos = SunCalc.getPosition(simNow.toDate(), lat, lon);
-
-        // Update model
-        const dist = new THREE.Matrix4();
-        dist.makeTranslation(0, 0, -10);
-        const altitude = new THREE.Matrix4();
-        altitude.makeRotationX(sunrisePos.altitude);
-        const azimuth = new THREE.Matrix4();
-        azimuth.makeRotationY(-sunrisePos.azimuth + Math.PI);
-        sun.matrix.identity();
-        sun.applyMatrix4(dist);
-        sun.applyMatrix4(altitude);
-        sun.applyMatrix4(azimuth);
-        sun.updateMatrix();
-
-        light.position.x = sun.position.x;
-        light.position.y = sun.position.y;
-        light.position.z = sun.position.z;
-
+        if(keyState['KeyW']) controls.moveForward(speed); // TODO: speed * time
+        if(keyState['KeyS']) controls.moveForward(-speed); // TODO: speed * time
+        if(keyState['KeyD']) controls.moveRight(speed); // TODO: speed * time
+        if(keyState['KeyA']) controls.moveRight(-speed); // TODO: speed * time
         renderer.render(scene, camera);
-        if(cbAnimate.checked) tick();
         requestAnimationFrame(render);
     }
     render();
