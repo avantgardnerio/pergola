@@ -1,6 +1,16 @@
 rotate([0,0,-45]) {
 // foor
-//cube([5.6896, 2.896, 0.038]);
+rotate([90, 0, 0]) {
+cube([5.6896, 1, 0.038]);
+    rotate([0, 90, 0]) {
+        cube([2.896, 1, 0.038]);
+    }
+    translate([5.6896, 0, 0]) {
+        rotate([0, 90, 0]) {
+            cube([2.896, 1, 0.038]);
+        }
+    }
+}
 // wall plane
 translate([0, 2.896, 0]) {
     rotate([90,0,0]) {
@@ -28,6 +38,7 @@ translate([1.70,2.2,1.5]) {
 }
 }
 // pergola
+/*
 intersection() {
     rotate([0,0,-45]) {
         translate([0,0,3.23]) {
@@ -43,3 +54,4 @@ intersection() {
         }
     }
 }
+*/
