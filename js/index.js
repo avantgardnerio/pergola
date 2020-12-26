@@ -211,6 +211,23 @@ onload = () => {
     rightRailing.updateMatrix();
     scene.add(rightRailing);
 
+    // leftRailing
+    const leftRailingGeometry = new THREE.BoxGeometry(deckLength, 0.013, railingHeight);
+    const leftRailingMaterial = new THREE.MeshPhongMaterial({color: 0x888888});
+    const leftRailing = new THREE.Mesh(leftRailingGeometry, leftRailingMaterial);
+    leftRailing.receiveShadow = true;
+    const leftRailingRight = new THREE.Matrix4();
+    leftRailingRight.makeTranslation(0, 0, deckWidth / 2);
+    const leftRailingSw = new THREE.Matrix4();
+    leftRailingSw.makeRotationY(Math.PI / -4 + Math.PI / 2);
+    leftRailing.matrix.identity();
+    leftRailing.applyMatrix4(frontRailingOrigin);
+    leftRailing.applyMatrix4(backWallVertical);
+    leftRailing.applyMatrix4(leftRailingRight);
+    leftRailing.applyMatrix4(leftRailingSw);
+    leftRailing.updateMatrix();
+    scene.add(leftRailing);
+
     // suns
     const roofPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -2.895);
     const sun_geom = new THREE.SphereGeometry(sunRadius, 32, 32);
