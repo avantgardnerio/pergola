@@ -131,7 +131,7 @@ onload = () => {
     rbWall.onclick = camChange;
     rbOrbit.onclick = camChange;
     
-    // sun
+    // suns
     const sun_geom = new THREE.SphereGeometry(0.2, 32, 32);
     const start = moment("2020-12-21T00:00");
     const end = start.clone().add(1, 'year');
@@ -153,9 +153,6 @@ onload = () => {
                 .filter(path => path.isPointInFill(point))
                 .map(path => path.getAttribute("fill"))[0];
             const temp = temps[fill];
-            // if(temp >= 80) {
-            //     continue;
-            // }
 
             const sun_mat = new THREE.MeshBasicMaterial({color: fill});
             const sunPos = SunCalc.getPosition(now.toDate(), lat, lon);
@@ -174,8 +171,16 @@ onload = () => {
             sun.applyMatrix4(altitude);
             sun.applyMatrix4(azimuth);
             sun.updateMatrix();
-
             scene.add(sun);
+
+            if(temp >= 80) {
+                const lineMaterial = new THREE.LineBasicMaterial({ color: fill });
+                const lineGeometry = new THREE.Geometry();
+                lineGeometry.vertices.push(new THREE.Vector3(0, 1.5, 0));
+                lineGeometry.vertices.push(new THREE.Vector3(sun.position.x, sun.position.y, sun.position.z));
+                const ray = new THREE.Line( lineGeometry, lineMaterial );
+                scene.add( ray );
+            }
         }
     }
 
