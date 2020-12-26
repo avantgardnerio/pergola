@@ -158,6 +158,7 @@ onload = () => {
         const sunsetStr = `${hour.padStart(2, '0')}:00`;
         const sunset = moment(`${day.format('YYYY-MM-DD')}T${sunsetStr}`);
         const nowStr = `${day.format('YYYY-MM-DD')}T${sunriseStr}`;
+        let lastPos = undefined;
         for (let now = moment(nowStr); sunset.diff(now) > 0; now.add(30, 'minutes')) {
             const dayOfYear = now.dayOfYear();
             const minutes = now.get('hours') * 60 + now.get('minutes');
@@ -189,7 +190,6 @@ onload = () => {
             sun.updateMatrix();
             scene.add(sun);
 
-            // if(temp >= 80) {
             const dir = sun.position.sub(headPos);
             dir.normalize();
             const ray = new THREE.Ray(headPos, dir);
@@ -198,15 +198,19 @@ onload = () => {
             const inv = roof.matrix.clone().invert();
             const isec2 = isec3.clone();
             isec2.applyMatrix4(inv);
-            if (isec2.x < roofWidth / -2 || isec2.x > roofWidth / 2) continue;
-            if (isec2.z < roofLength / -2 || isec2.z > roofLength / 2) continue;
-            const lineMaterial = new THREE.LineBasicMaterial({color: fill});
-            const lineGeometry = new THREE.Geometry();
-            lineGeometry.vertices.push(headPos);
-            lineGeometry.vertices.push(isec3);
-            const line = new THREE.Line(lineGeometry, lineMaterial);
-            scene.add(line);
-            // }
+            if (isec2.x >= roofWidth / -2 && isec2.x <= roofWidth / 2) {
+                if (isec2.z >= roofLength / -2 && isec2.z <= roofLength / 2) {
+                    if(lastPos !== undefined) {
+                        const lineMaterial = new THREE.LineBasicMaterial({color: fill});
+                        const lineGeometry = new THREE.Geometry();
+                        lineGeometry.vertices.push(lastPos);
+                        lineGeometry.vertices.push(isec3);
+                        const line = new THREE.Line(lineGeometry, lineMaterial);
+                        scene.add(line);
+                    }
+                }
+            }
+            lastPos = isec3;
         }
     }
 
