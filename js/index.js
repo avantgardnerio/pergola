@@ -98,8 +98,10 @@ onload = () => {
     tmCur.onchange = () => requestAnimationFrame(render);
 
     const scene = new THREE.Scene();
-    const near = 0.00001;
-    const far = 1000;
+    const near = 0.001;
+    const sunRadius =          696340000; // 696.34 million m
+    const earthSunDist =    149600000000; // 149.6 million km = 149.6 billion m
+    const far =             200000000000;
     let wallCam = new THREE.OrthographicCamera(-0.01, canvas.clientWidth / 256, canvas.clientHeight / 256, -0.01, near, far);
     wallCam.position.x = -Math.PI;
     wallCam.position.y = 0;
@@ -107,7 +109,7 @@ onload = () => {
     wallCam.rotation.x = 0;
     wallCam.rotation.y = -Math.PI / 4;
     wallCam.rotation.z = 0;
-    const headCam = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight);
+    const headCam = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, near, far);
     headCam.position.x = 0;
     headCam.position.y = 1.5;
     headCam.position.z = 0;
@@ -145,7 +147,7 @@ onload = () => {
 
     // suns
     const roofPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -2.895);
-    const sun_geom = new THREE.SphereGeometry(0.2, 32, 32);
+    const sun_geom = new THREE.SphereGeometry(sunRadius, 32, 32);
     const start = moment("2020-12-21T00:00");
     const end = start.clone().add(1, 'year');
     const headPos = new THREE.Vector3(0, 1.5, 0);
@@ -175,7 +177,7 @@ onload = () => {
             sun.matrixAutoUpdate = false;
 
             const dist = new THREE.Matrix4();
-            dist.makeTranslation(0, 0, -150000000000);
+            dist.makeTranslation(0, 0, -earthSunDist);
             const altitude = new THREE.Matrix4();
             altitude.makeRotationX(sunPos.altitude);
             const azimuth = new THREE.Matrix4();
