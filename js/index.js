@@ -89,9 +89,9 @@ onload = () => {
         if(cbAnimate.checked) tick();
     }
     btnCameraReset.onclick = () => {
-        orbitCam.position.x = 0;
-        orbitCam.position.y = 0;
-        orbitCam.position.z = 10;
+        headCam.position.x = 0;
+        headCam.position.y = 0;
+        headCam.position.z = 10;
         controls.update();
     }
     dtCur.onchange = () => requestAnimationFrame(render);
@@ -107,25 +107,26 @@ onload = () => {
     wallCam.rotation.x = 0;
     wallCam.rotation.y = -Math.PI / 4;
     wallCam.rotation.z = 0;
-    const orbitCam = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight);
-    orbitCam.position.y = 1.5;
-    orbitCam.position.z = 10;
+    const headCam = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight);
+    headCam.position.x = 0;
+    headCam.position.y = 1.5;
+    headCam.position.z = 0;
     const renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.shadowMapSoft = true;
     canvas.appendChild(renderer.domElement);
-    const controls = new THREE.PointerLockControls( orbitCam, renderer.domElement );
+    const controls = new THREE.PointerLockControls( headCam, renderer.domElement );
     controls.connect();
     canvas.onclick = () => controls.lock();
     window.onkeydown = (e) => keyState[e.code] = true;
     window.onkeyup = (e) => delete keyState[e.code];
 
-    let camera = orbitCam;
+    let camera = headCam;
     const camChange = (e) => {
         if(e.target.value === "wall") camera = wallCam;
-        if(e.target.value === "orbit") camera = orbitCam;
+        if(e.target.value === "orbit") camera = headCam;
     }
     rbWall.onclick = camChange;
     rbOrbit.onclick = camChange;
@@ -188,15 +189,25 @@ onload = () => {
     scene.add( cube );
 
     // pergola
-    const loader = new THREE.STLLoader();
-    loader.load( './model/pergola.stl.txt', function ( geometry ) {
-        const material = new THREE.MeshPhongMaterial( { color: 0x888888 } );
-        const mesh = new THREE.Mesh( geometry, material );
-        mesh.rotation.set( - Math.PI / 2, 0, 0 );
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-        scene.add( mesh );
-    } );
+    // const loader = new THREE.STLLoader();
+    // loader.load( './model/pergola.stl.txt', function ( geometry ) {
+    //     const material = new THREE.MeshPhongMaterial( { color: 0x888888 } );
+    //     const mesh = new THREE.Mesh( geometry, material );
+    //     mesh.rotation.set( - Math.PI / 2, 0, 0 );
+    //     mesh.castShadow = true;
+    //     mesh.receiveShadow = true;
+    //     scene.add( mesh );
+    // } );
+
+    // roof
+    const roofGeometry = new THREE.BoxGeometry( 5.6896, 0.152, 2.8956 );
+    const roofMaterial = new THREE.MeshPhongMaterial({color: 0x888888});
+    const roof = new THREE.Mesh( roofGeometry, roofMaterial );
+    roof.receiveShadow = true;
+    roof.position.y = 3.23;
+    roof.rotation.y = -Math.PI / 4;
+    scene.add( roof );
+
 
     const ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light
     scene.add( ambientLight );

@@ -1,3 +1,12 @@
+$fn = 25;
+translate([3, 3, 0]) {
+    rotate([130, 0, 0]) {
+        difference() {
+            cylinder(h=1.2, r=5);
+            cylinder(h=1.2, r=4.9);
+        }
+    }
+}
 rotate([0,0,-45]) {
 // foor
 rotate([90, 0, 0]) {
