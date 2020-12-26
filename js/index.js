@@ -86,7 +86,7 @@ onload = () => {
     btnMonthDec.onclick = () => setSimNow(getSimNow().subtract(1, 'months'));
     btnMonthEnc.onclick = () => setSimNow(getSimNow().add(1, 'months'));
     cbAnimate.onchange = () => {
-        if(cbAnimate.checked) tick();
+        if (cbAnimate.checked) tick();
     }
     btnCameraReset.onclick = () => {
         headCam.position.x = 0;
@@ -100,7 +100,7 @@ onload = () => {
     const scene = new THREE.Scene();
     const near = 0.00001;
     const far = 1000;
-    let wallCam = new THREE.OrthographicCamera( -0.01, canvas.clientWidth / 256, canvas.clientHeight / 256, -0.01, near, far );
+    let wallCam = new THREE.OrthographicCamera(-0.01, canvas.clientWidth / 256, canvas.clientHeight / 256, -0.01, near, far);
     wallCam.position.x = -Math.PI;
     wallCam.position.y = 0;
     wallCam.position.z = Math.PI;
@@ -117,7 +117,7 @@ onload = () => {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.shadowMapSoft = true;
     canvas.appendChild(renderer.domElement);
-    const controls = new THREE.PointerLockControls( headCam, renderer.domElement );
+    const controls = new THREE.PointerLockControls(headCam, renderer.domElement);
     controls.connect();
     canvas.onclick = () => controls.lock();
     window.onkeydown = (e) => keyState[e.code] = true;
@@ -125,26 +125,38 @@ onload = () => {
 
     let camera = headCam;
     const camChange = (e) => {
-        if(e.target.value === "wall") camera = wallCam;
-        if(e.target.value === "orbit") camera = headCam;
+        if (e.target.value === "wall") camera = wallCam;
+        if (e.target.value === "orbit") camera = headCam;
     }
     rbWall.onclick = camChange;
     rbOrbit.onclick = camChange;
-    
+
+    // roof
+    const roofWidth = 5.6896;
+    const roofLength = 2.8956;
+    const roofGeometry = new THREE.BoxGeometry(roofWidth, 0.152, roofLength);
+    const roofMaterial = new THREE.MeshPhongMaterial({color: 0x888888});
+    const roof = new THREE.Mesh(roofGeometry, roofMaterial);
+    roof.receiveShadow = true;
+    roof.position.y = 3.23;
+    roof.rotation.y = -Math.PI / 4;
+    roof.updateMatrix();
+    scene.add(roof);
+
     // suns
     const roofPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -2.895);
     const sun_geom = new THREE.SphereGeometry(0.2, 32, 32);
     const start = moment("2020-12-21T00:00");
     const end = start.clone().add(1, 'year');
     const headPos = new THREE.Vector3(0, 1.5, 0);
-    for(let day = start; end.diff(day) > 0; day.add(1, 'months')) {
+    for (let day = start; end.diff(day) > 0; day.add(2, 'weeks')) {
         const times = SunCalc.getTimes(start.toDate(), lat, lon);
         const sunriseStr = `${moment(times.sunrise).format('HH')}:00`;
         const hour = `${times.sunset.getHours() + 1}`;
         const sunsetStr = `${hour.padStart(2, '0')}:00`;
         const sunset = moment(`${day.format('YYYY-MM-DD')}T${sunsetStr}`);
         const nowStr = `${day.format('YYYY-MM-DD')}T${sunriseStr}`;
-        for(let now = moment(nowStr); sunset.diff(now) > 0; now.add(1, 'hour')) {
+        for (let now = moment(nowStr); sunset.diff(now) > 0; now.add(30, 'minutes')) {
             const dayOfYear = now.dayOfYear();
             const minutes = now.get('hours') * 60 + now.get('minutes');
             point.x = left + (dayOfYear / 365) * width;
@@ -176,29 +188,34 @@ onload = () => {
             scene.add(sun);
 
             // if(temp >= 80) {
-                const dir = sun.position.sub(headPos);
-                dir.normalize();
-                const ray = new THREE.Ray(headPos, dir);
-                const isec = new THREE.Vector3();
-                if(ray.intersectPlane(roofPlane, isec) === null) continue;
-                const lineMaterial = new THREE.LineBasicMaterial({ color: fill });
-                const lineGeometry = new THREE.Geometry();
-                lineGeometry.vertices.push(headPos);
-                lineGeometry.vertices.push(isec);
-                const line = new THREE.Line( lineGeometry, lineMaterial );
-                scene.add( line );
+            const dir = sun.position.sub(headPos);
+            dir.normalize();
+            const ray = new THREE.Ray(headPos, dir);
+            const isec3 = new THREE.Vector3();
+            if (ray.intersectPlane(roofPlane, isec3) === null) continue;
+            const inv = roof.matrix.clone().invert();
+            const isec2 = isec3.clone();
+            isec2.applyMatrix4(inv);
+            if (isec2.x < roofWidth / -2 || isec2.x > roofWidth / 2) continue;
+            if (isec2.z < roofLength / -2 || isec2.z > roofLength / 2) continue;
+            const lineMaterial = new THREE.LineBasicMaterial({color: fill});
+            const lineGeometry = new THREE.Geometry();
+            lineGeometry.vertices.push(headPos);
+            lineGeometry.vertices.push(isec3);
+            const line = new THREE.Line(lineGeometry, lineMaterial);
+            scene.add(line);
             // }
         }
     }
 
     // ground
-    const geometry = new THREE.BoxGeometry( 20, .1, 20 );
+    const geometry = new THREE.BoxGeometry(20, .1, 20);
     const material = new THREE.MeshPhongMaterial({color: 0x888888});
     material.map = THREE.ImageUtils.loadTexture('img/compass-rose.png')
-    const cube = new THREE.Mesh( geometry, material );
+    const cube = new THREE.Mesh(geometry, material);
     cube.receiveShadow = true;
     cube.position.y = -0.2;
-    scene.add( cube );
+    scene.add(cube);
 
     // pergola
     // const loader = new THREE.STLLoader();
@@ -211,18 +228,8 @@ onload = () => {
     //     scene.add( mesh );
     // } );
 
-    // roof
-    const roofGeometry = new THREE.BoxGeometry( 5.6896, 0.152, 2.8956 );
-    const roofMaterial = new THREE.MeshPhongMaterial({color: 0x888888});
-    const roof = new THREE.Mesh( roofGeometry, roofMaterial );
-    roof.receiveShadow = true;
-    roof.position.y = 3.23;
-    roof.rotation.y = -Math.PI / 4;
-    scene.add( roof );
-
-
-    const ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light
-    scene.add( ambientLight );
+    const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
+    scene.add(ambientLight);
 
     // directional
     const light = new THREE.DirectionalLight(0xffffff, 0.9);
@@ -247,10 +254,10 @@ onload = () => {
         setSimNow(simNow);
     }
     const render = () => {
-        if(keyState['KeyW']) controls.moveForward(speed); // TODO: speed * time
-        if(keyState['KeyS']) controls.moveForward(-speed); // TODO: speed * time
-        if(keyState['KeyD']) controls.moveRight(speed); // TODO: speed * time
-        if(keyState['KeyA']) controls.moveRight(-speed); // TODO: speed * time
+        if (keyState['KeyW']) controls.moveForward(speed); // TODO: speed * time
+        if (keyState['KeyS']) controls.moveForward(-speed); // TODO: speed * time
+        if (keyState['KeyD']) controls.moveRight(speed); // TODO: speed * time
+        if (keyState['KeyA']) controls.moveRight(-speed); // TODO: speed * time
         renderer.render(scene, camera);
         requestAnimationFrame(render);
     }
