@@ -132,9 +132,11 @@ onload = () => {
     rbOrbit.onclick = camChange;
     
     // suns
+    const roofPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -2.895);
     const sun_geom = new THREE.SphereGeometry(0.2, 32, 32);
     const start = moment("2020-12-21T00:00");
     const end = start.clone().add(1, 'year');
+    const headPos = new THREE.Vector3(0, 1.5, 0);
     for(let day = start; end.diff(day) > 0; day.add(1, 'months')) {
         const times = SunCalc.getTimes(start.toDate(), lat, lon);
         const sunriseStr = `${moment(times.sunrise).format('HH')}:00`;
@@ -173,14 +175,19 @@ onload = () => {
             sun.updateMatrix();
             scene.add(sun);
 
-            if(temp >= 80) {
+            // if(temp >= 80) {
+                const dir = sun.position.sub(headPos);
+                dir.normalize();
+                const ray = new THREE.Ray(headPos, dir);
+                const isec = new THREE.Vector3();
+                if(ray.intersectPlane(roofPlane, isec) === null) continue;
                 const lineMaterial = new THREE.LineBasicMaterial({ color: fill });
                 const lineGeometry = new THREE.Geometry();
-                lineGeometry.vertices.push(new THREE.Vector3(0, 1.5, 0));
-                lineGeometry.vertices.push(new THREE.Vector3(sun.position.x, sun.position.y, sun.position.z));
-                const ray = new THREE.Line( lineGeometry, lineMaterial );
-                scene.add( ray );
-            }
+                lineGeometry.vertices.push(headPos);
+                lineGeometry.vertices.push(isec);
+                const line = new THREE.Line( lineGeometry, lineMaterial );
+                scene.add( line );
+            // }
         }
     }
 
