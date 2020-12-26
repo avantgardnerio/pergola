@@ -258,6 +258,8 @@ onload = () => {
         if (keyState['KeyS']) controls.moveForward(-speed); // TODO: speed * time
         if (keyState['KeyD']) controls.moveRight(speed); // TODO: speed * time
         if (keyState['KeyA']) controls.moveRight(-speed); // TODO: speed * time
+        if (keyState['KeyQ']) headCam.position.sub(new THREE.Vector3(0, speed, 0));
+        if (keyState['KeyE']) headCam.position.add(new THREE.Vector3(0, speed, 0));
         renderer.render(scene, camera);
         requestAnimationFrame(render);
     }
