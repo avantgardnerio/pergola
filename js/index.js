@@ -136,23 +136,45 @@ onload = () => {
     // roof
     const deckWidth = 5.6896;
     const deckLength = 2.8956;
+    const storyHeight = 3.23;
     const roofGeometry = new THREE.BoxGeometry(deckWidth, 0.152, deckLength);
     const roofMaterial = new THREE.MeshPhongMaterial({color: 0x888888});
     const roof = new THREE.Mesh(roofGeometry, roofMaterial);
     roof.receiveShadow = true;
-    roof.position.y = 3.23;
+    roof.position.y = storyHeight;
     roof.rotation.y = -Math.PI / 4;
     roof.updateMatrix();
     scene.add(roof);
 
     // floor
-    const floorGeometry = new THREE.BoxGeometry(deckWidth, 0.152, deckLength);
+    const floorGeometry = new THREE.BoxGeometry(deckWidth, 0.013, deckLength);
     const floorMaterial = new THREE.MeshPhongMaterial({color: 0x888888});
     const floor = new THREE.Mesh(floorGeometry, floorMaterial);
     floor.receiveShadow = true;
     floor.rotation.y = -Math.PI / 4;
     floor.updateMatrix();
     scene.add(floor);
+
+    // backWall
+    const backWallGeometry = new THREE.BoxGeometry(deckWidth, 0.013, deckLength);
+    const backWallMaterial = new THREE.MeshPhongMaterial({color: 0x888888});
+    const backWall = new THREE.Mesh(backWallGeometry, backWallMaterial);
+    backWall.receiveShadow = true;
+    const backWallOrigin = new THREE.Matrix4();
+    backWallOrigin.makeTranslation(0, 0, deckLength / 2);
+    const backWallVertical = new THREE.Matrix4();
+    backWallVertical.makeRotationX(Math.PI / -2);
+    const backWallSw = new THREE.Matrix4();
+    backWallSw.makeRotationY(Math.PI / -4 + Math.PI);
+    const backWallBack = new THREE.Matrix4();
+    backWallBack.makeTranslation(0, 0, deckLength / 2);
+    backWall.matrix.identity();
+    backWall.applyMatrix4(backWallOrigin);
+    backWall.applyMatrix4(backWallVertical);
+    backWall.applyMatrix4(backWallBack);
+    backWall.applyMatrix4(backWallSw);
+    backWall.updateMatrix();
+    scene.add(backWall);
 
     // suns
     const roofPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -2.895);
