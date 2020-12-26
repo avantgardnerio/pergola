@@ -134,9 +134,9 @@ onload = () => {
     rbOrbit.onclick = camChange;
 
     // roof
-    const roofWidth = 5.6896;
-    const roofLength = 2.8956;
-    const roofGeometry = new THREE.BoxGeometry(roofWidth, 0.152, roofLength);
+    const deckWidth = 5.6896;
+    const deckLength = 2.8956;
+    const roofGeometry = new THREE.BoxGeometry(deckWidth, 0.152, deckLength);
     const roofMaterial = new THREE.MeshPhongMaterial({color: 0x888888});
     const roof = new THREE.Mesh(roofGeometry, roofMaterial);
     roof.receiveShadow = true;
@@ -145,12 +145,21 @@ onload = () => {
     roof.updateMatrix();
     scene.add(roof);
 
+    // floor
+    const floorGeometry = new THREE.BoxGeometry(deckWidth, 0.152, deckLength);
+    const floorMaterial = new THREE.MeshPhongMaterial({color: 0x888888});
+    const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    floor.receiveShadow = true;
+    floor.rotation.y = -Math.PI / 4;
+    floor.updateMatrix();
+    scene.add(floor);
+
     // suns
     const roofPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -2.895);
     const sun_geom = new THREE.SphereGeometry(sunRadius, 32, 32);
     const start = moment("2020-12-21T00:00");
     const end = start.clone().add(1, 'year');
-    const headPos = new THREE.Vector3(0, 1.5, 0);
+    const headPos = new THREE.Vector3(0, 0, 0);
     for (let day = start; end.diff(day) > 0; day.add(2, 'weeks')) {
         const times = SunCalc.getTimes(start.toDate(), lat, lon);
         const sunriseStr = `${moment(times.sunrise).format('HH')}:00`;
@@ -198,8 +207,8 @@ onload = () => {
             const inv = roof.matrix.clone().invert();
             const isec2 = isec3.clone();
             isec2.applyMatrix4(inv);
-            if (isec2.x >= roofWidth / -2 && isec2.x <= roofWidth / 2) {
-                if (isec2.z >= roofLength / -2 && isec2.z <= roofLength / 2) {
+            if (isec2.x >= deckWidth / -2 && isec2.x <= deckWidth / 2) {
+                if (isec2.z >= deckLength / -2 && isec2.z <= deckLength / 2) {
                     if(lastPos !== undefined) {
                         const lineMaterial = new THREE.LineBasicMaterial({color: fill});
                         const lineGeometry = new THREE.Geometry();
