@@ -133,6 +133,13 @@ onload = () => {
     rbWall.onclick = camChange;
     rbOrbit.onclick = camChange;
 
+    // sun
+    const sun_geom = new THREE.SphereGeometry(sunRadius, 32, 32);
+    const sun_mat = new THREE.MeshBasicMaterial({color: 0xFDB813});
+    const sun = new THREE.Mesh(sun_geom, sun_mat);
+    sun.matrixAutoUpdate = false;
+    scene.add(sun);
+
     // roof
     const deckWidth = 5.6896;
     const deckLength = 2.8956;
@@ -230,7 +237,6 @@ onload = () => {
 
     // suns
     const roofPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -2.895);
-    const sun_geom = new THREE.SphereGeometry(sunRadius, 32, 32);
     const start = moment("2020-12-21T00:00");
     const end = start.clone().add(1, 'year');
     const headPos = new THREE.Vector3(0, 0, 0);
@@ -349,6 +355,32 @@ onload = () => {
         if (keyState['KeyA']) controls.moveRight(-speed); // TODO: speed * time
         if (keyState['KeyQ']) headCam.position.sub(new THREE.Vector3(0, speed, 0));
         if (keyState['KeyE']) headCam.position.add(new THREE.Vector3(0, speed, 0));
+
+        // Get simulation now
+        const simNow = getSimNow();
+
+        // suncalc
+        const lat = 39.7;
+        const lon = -105;
+        const sunrisePos = SunCalc.getPosition(simNow.toDate(), lat, lon);
+
+        // Update model
+        const dist = new THREE.Matrix4();
+        dist.makeTranslation(0, 0, -earthSunDist);
+        const altitude = new THREE.Matrix4();
+        altitude.makeRotationX(sunrisePos.altitude);
+        const azimuth = new THREE.Matrix4();
+        azimuth.makeRotationY(-sunrisePos.azimuth + Math.PI);
+        sun.matrix.identity();
+        sun.applyMatrix4(dist);
+        sun.applyMatrix4(altitude);
+        sun.applyMatrix4(azimuth);
+        sun.updateMatrix();
+
+        light.position.x = sun.position.x;
+        light.position.y = sun.position.y;
+        light.position.z = sun.position.z;
+
         renderer.render(scene, camera);
         requestAnimationFrame(render);
     }
