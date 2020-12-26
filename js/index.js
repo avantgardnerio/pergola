@@ -175,7 +175,7 @@ onload = () => {
             sun.matrixAutoUpdate = false;
 
             const dist = new THREE.Matrix4();
-            dist.makeTranslation(0, 0, -10);
+            dist.makeTranslation(0, 0, -150000000000);
             const altitude = new THREE.Matrix4();
             altitude.makeRotationX(sunPos.altitude);
             const azimuth = new THREE.Matrix4();
